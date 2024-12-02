@@ -1,19 +1,28 @@
-# 🎈 Blank app template
+import streamlit as st
 
-A simple Streamlit app template for you to modify!
+# 페이지 제목 설정
+st.title("My Streamlit App")
+st.header("Header of the page")
+st.subheader("Subheader section")
 
-[![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://blank-app-template.streamlit.app/)
+# 사용자 입력 받기
+name = st.text_input("What's your name?")
+st.write(f"Hello, {name}!")
 
-### How to run it on your own machine
+# 버튼 추가
+if st.button('Click Me'):
+    st.write("You clicked the button!")
 
-1. Install the requirements
+# 그래프 또는 차트 출력
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
 
-   ```
-   $ pip install -r requirements.txt
-   ```
+# 예시 데이터프레임 생성
+data = pd.DataFrame({
+    'x': np.linspace(0, 10, 100),
+    'y': np.sin(np.linspace(0, 10, 100))
+})
 
-2. Run the app
+st.line_chart(data)
 
-   ```
-   $ streamlit run streamlit_app.py
-   ```
