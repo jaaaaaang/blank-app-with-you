@@ -42,7 +42,7 @@ def run_streamlit():
 if __name__ == "__main__":
     # Flask를 백그라운드로 실행
     import threading
-    threading.Thread(target=lambda: flask_app.run(host="0.0.0.0", port=5000)).start()
+    threading.Thread(target=lambda: flask_app.run(host="0.0.0.0", port=6000)).start()
     
     # Streamlit 실행
     cli.main()
