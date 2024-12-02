@@ -1,48 +1,49 @@
 import streamlit as st
-from flask import Flask, request, jsonify
-from streamlit.web import cli
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
+import threading
+import uvicorn
 
-# Flask 인스턴스를 생성하여 Streamlit과 함께 사용
-flask_app = Flask(__name__)
+# FastAPI 인스턴스 생성
+api_app = FastAPI()
 
-@flask_app.route('/multiply', methods=['POST'])
-def multiply():
+# FastAPI 엔드포인트 정의
+@api_app.post("/multiply")
+async def multiply(request: Request):
     """
-    외부에서 POST 요청으로 'number'를 받아 100을 곱해서 반환하는 API 엔드포인트
+    외부에서 POST 요청으로 'number' 값을 받아 100을 곱해서 반환하는 API
     """
-    data = request.get_json()  # JSON 요청 받기
-    if not data or 'number' not in data:
-        return jsonify({"error": "Invalid input. Please provide a 'number' field."}), 400
-
     try:
-        number = float(data['number'])  # 숫자로 변환
-        result = number * 100  # 곱하기 100
-        return jsonify({"result": result}), 200
-    except ValueError:
-        return jsonify({"error": "The 'number' must be numeric."}), 400
+        data = await request.json()
+        number = data.get("number")
+        if number is None:
+            return JSONResponse({"error": "Missing 'number' field"}, status_code=400)
+        result = number * 100
+        return {"result": result}
+    except Exception as e:
+        return JSONResponse({"error": str(e)}, status_code=500)
 
 
-# Streamlit은 Flask의 URL과 함께 실행
+# Streamlit 앱 정의
 def run_streamlit():
-    st.title("Multiply API Host")
-    st.write("This page is hosting an API endpoint at `/multiply`.")
-    st.write("To test, send a POST request to `/multiply` with a JSON body containing a 'number'.")
+    st.title("Streamlit with API Integration")
+    st.write("This Streamlit app is hosting an API endpoint at `/multiply`.")
+    st.write("Send a POST request to `/multiply` with a JSON body containing a 'number' field.")
     st.json({
         "endpoint": "/multiply",
         "method": "POST",
-        "example_request": {
-            "number": 5
-        },
-        "example_response": {
-            "result": 500
-        }
+        "example_request": {"number": 10},
+        "example_response": {"result": 1000},
     })
 
 
+# FastAPI와 Streamlit 동시에 실행
+def run_fastapi():
+    uvicorn.run(api_app, host="0.0.0.0", port=8000)
+
+
 if __name__ == "__main__":
-    # Flask를 백그라운드로 실행
-    import threading
-    threading.Thread(target=lambda: flask_app.run(host="0.0.0.0", port=6000)).start()
-    
+    # FastAPI 실행 (Thread로 비동기 실행)
+    threading.Thread(target=run_fastapi).start()
     # Streamlit 실행
-    cli.main()
+    run_streamlit()
