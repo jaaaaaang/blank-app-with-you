@@ -1,27 +1,19 @@
 import streamlit as st
 
-# 페이지 제목 설정
-st.title("My Streamlit App")
-st.header("Header of the page")
-st.subheader("Subheader section")
+# Streamlit 앱 제목
+st.title("Multiply Service API Test")
 
-# 사용자 입력 받기
-name = st.text_input("What's your name?")
-st.write(f"Hello, {name}!")
+# POST 요청 데이터 시뮬레이션
+if "multiplier" not in st.session_state:
+    st.session_state.multiplier = None
 
-# 버튼 추가
-if st.button('Click Me'):
-    st.write("You clicked the button!")
+# 사용자 요청 처리
+with st.form(key="api_form"):
+    number = st.number_input("Enter a number", value=0)
+    submit = st.form_submit_button("Multiply!")
 
-# 그래프 또는 차트 출력
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
+    if submit:
+        # 입력값은 number  (100배를 증가해서 리턴)
+        calculate_res = (number * 100)
 
-# 예시 데이터프레임 생성
-data = pd.DataFrame({
-    'x': np.linspace(0, 10, 100),
-    'y': np.sin(np.linspace(0, 10, 100))
-})
-
-st.line_chart(data)
+st.text_input("run_this")
